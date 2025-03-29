@@ -1,0 +1,1 @@
+import React from 'react'; import './index.css'; export default function App() { return (<div className='p-6 text-xl font-bold'>PAYYMO Open Banking UI</div>); }
