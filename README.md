@@ -70,3 +70,65 @@ Need help? Contact our support team:
 
 - Email: support@payymo.com
 - Support Portal: https://support.payymo.com
+
+# Payymo Dashboard with NobleUI
+
+A modern dashboard interface for Payymo, integrated with WHMCS and featuring a beautiful NobleUI theme.
+
+## Features
+
+- Light and dark theme support with automatic system preference detection
+- Responsive design that works on all devices
+- Interactive charts and data visualization
+- Clean and modern UI based on NobleUI
+- WHMCS integration for seamless user experience
+
+## Deployment to Netlify
+
+### Option 1: Deploy via Netlify UI
+
+1. Log in to your Netlify account
+2. Click "Add new site" > "Import an existing project"
+3. Connect to your Git provider and select this repository
+4. Configure build settings:
+   - Build command: `npm run build`
+   - Publish directory: `flask_backend/static`
+5. Click "Deploy site"
+
+### Option 2: Deploy with Netlify CLI
+
+1. Install Netlify CLI: `npm install -g netlify-cli`
+2. Login to Netlify: `netlify login`
+3. Initialize your site: `netlify init`
+4. Follow the prompts to configure your site
+5. Deploy: `netlify deploy --prod`
+
+### One-click Deploy
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/yourusername/payymo-dashboard)
+
+## Local Development
+
+1. Clone this repository
+2. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   npm install
+   ```
+3. Start the Flask development server:
+   ```
+   python -m flask run
+   ```
+4. Visit http://localhost:5000 in your browser
+
+## Screenshots
+
+### Light Mode
+![Dashboard Light Mode](flask_backend/static/screenshots/nobleui_dashboard_light.png)
+
+### Dark Mode
+![Dashboard Dark Mode](flask_backend/static/screenshots/nobleui_dashboard_dark.png)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

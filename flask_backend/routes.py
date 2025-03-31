@@ -550,67 +550,90 @@ def get_stripe_balance():
 
 # ============= Admin Dashboard =============
 
-@app.route('/')
+@app.route('/dashboard')
 def dashboard():
-    """Main dashboard page"""
-    # For development mode, auto-authenticate
-    session['authenticated'] = True
-    
-    # Simple authentication check - in a real app, use a proper auth system
-    # if not session.get('authenticated'):
-    #     return redirect(url_for('login'))
-    
-    # Get some stats for the dashboard
+    """Main dashboard route"""
     try:
-        license_count = LicenseKey.query.count()
-        active_licenses = LicenseKey.query.filter_by(status='active').count()
-        whmcs_instances = WhmcsInstance.query.count()
-        bank_connections = BankConnection.query.count()
-        transactions = Transaction.query.count()
-        matches = InvoiceMatch.query.count()
+        admin_session = session.get('admin_logged_in', False)
+        tenant_id = session.get('tenant_id')
         
-        # Stripe stats
-        stripe_connections = StripeConnection.query.count()
-        stripe_payments = StripePayment.query.count()
+        # For development mode, auto-authenticate
+        session['authenticated'] = True
         
-        recent_verifications = LicenseVerification.query.order_by(
-            LicenseVerification.verified_at.desc()
-        ).limit(10).all()
+        # Try to get dashboard statistics
+        stats = {}
         
-        recent_transactions = Transaction.query.order_by(
-            Transaction.transaction_date.desc()
-        ).limit(10).all()
+        # Get dashboard stats from the shared function
+        try:
+            from flask_backend.routes_steex import get_dashboard_stats
+            stats_data = get_dashboard_stats()
+            if stats_data and stats_data.get('status') == 'success':
+                stats = stats_data
+        except Exception as e:
+            logger.error(f"Error getting dashboard stats: {str(e)}")
+            stats = {
+                'transactions': {'total': 0, 'total_amount': 0, 'month': {'count': 0, 'amount': 0}},
+                'bank_connections': {'total': 0, 'active': 0},
+                'matches': {'total': 0, 'confirmed': 0, 'pending': 0},
+                'stripe_connections': {'total': 0, 'active': 0},
+                'stripe_payments': {'total': 0, 'total_amount': 0}
+            }
         
-        # Get recent Stripe payments
-        recent_stripe_payments = StripePayment.query.order_by(
-            StripePayment.payment_date.desc()
-        ).limit(10).all()
+        # Get recent transactions for the dashboard
+        recent_transactions = []
+        bank_connections = []
+        stripe_connections = []
         
-        # Get current date for charts
-        now = datetime.now()
-        day_delta = timedelta(days=1)
-        
+        if tenant_id:
+            # Get bank connections for this tenant
+            bank_connections = BankConnection.query.filter_by(
+                whmcs_instance_id=tenant_id
+            ).all()
+            
+            # Get bank IDs
+            bank_ids = [conn.bank_id for conn in bank_connections]
+            
+            # Get transactions
+            if bank_ids:
+                recent_transactions = Transaction.query.filter(
+                    Transaction.bank_id.in_(bank_ids)
+                ).order_by(
+                    Transaction.transaction_date.desc()
+                ).limit(10).all()
+            
+            # Get Stripe connections for the dashboard
+            stripe_connections = StripeConnection.query.filter_by(
+                whmcs_instance_id=tenant_id
+            ).all()
+                
         return render_template(
-            'dashboard.html',
-            stats={
-                'license_count': license_count,
-                'active_licenses': active_licenses,
-                'whmcs_instances': whmcs_instances,
-                'bank_connections': bank_connections,
-                'transactions': transactions,
-                'matches': matches,
-                'stripe_connections': stripe_connections,
-                'stripe_payments': stripe_payments
-            },
-            recent_verifications=recent_verifications,
+            'dashboard/dashboard.html',
+            admin_session=admin_session,
+            tenant_id=tenant_id,
+            stats=stats,
             recent_transactions=recent_transactions,
-            recent_stripe_payments=recent_stripe_payments,
-            now=now,
-            day_delta=day_delta
+            bank_connections=bank_connections,
+            stripe_connections=stripe_connections
         )
     except Exception as e:
         logger.error(f"Error rendering dashboard: {str(e)}")
-        return render_template('dashboard.html', error=str(e))
+        # Create empty data structures to prevent template errors
+        return render_template(
+            'dashboard/dashboard.html', 
+            error=str(e),
+            admin_session=False,
+            tenant_id=None,
+            stats={
+                'transactions': {'total': 0, 'total_amount': 0, 'month': {'count': 0, 'amount': 0}},
+                'bank_connections': {'total': 0, 'active': 0},
+                'matches': {'total': 0, 'confirmed': 0, 'pending': 0},
+                'stripe_connections': {'total': 0, 'active': 0},
+                'stripe_payments': {'total': 0, 'total_amount': 0}
+            },
+            recent_transactions=[],
+            bank_connections=[],
+            stripe_connections=[]
+        )
 
 @app.route('/dashboard2')
 def dashboard2():
@@ -826,3 +849,174 @@ def generate_stripe_test_data():
         return jsonify(result)
     except Exception as e:
         return handle_error(e)
+
+@app.route('/')
+def index():
+    """Root route that provides theme selection"""
+    from flask import render_template_string
+    html = """
+    <!DOCTYPE html>
+    <html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Payymo - Dashboard Selection</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --bs-body-color: #e3e2e7;
+                --bs-body-bg: #1a1c24;
+            }
+            .card {
+                border-radius: 1rem;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+            .btn {
+                border-radius: 2rem;
+                padding: 0.6rem 1.5rem;
+                font-weight: 500;
+            }
+        </style>
+    </head>
+    <body class="bg-dark">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h1>Payymo Dashboard</h1>
+                <p class="lead text-light opacity-75">Select the dashboard version you'd like to use</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="card bg-dark border-primary mb-4">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-4">
+                                <i class="fas fa-gem fa-3x text-primary mb-3"></i>
+                                <h2 class="card-title mb-2">NobleUI</h2>
+                                <p class="card-text text-light opacity-75">Modern premium theme with beautiful UI</p>
+                            </div>
+                            <a href="{{ url_for('nobleui_dashboard') }}" class="btn btn-primary w-100">Open NobleUI Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card bg-dark border-info mb-4">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-4">
+                                <i class="fas fa-tachometer-alt fa-3x text-info mb-3"></i>
+                                <h2 class="card-title mb-2">Bootstrap 5</h2>
+                                <p class="card-text text-light opacity-75">Clean Bootstrap 5 dashboard</p>
+                            </div>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-info w-100">Open Bootstrap Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card bg-dark border-success">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-4">
+                                <i class="fas fa-code fa-3x text-success mb-3"></i>
+                                <h2 class="card-title mb-2">Original</h2>
+                                <p class="card-text text-light opacity-75">Previous dashboard implementation</p>
+                            </div>
+                            <a href="{{ url_for('steex_dashboard') }}" class="btn btn-success w-100">Open Original Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return render_template_string(html)
+
+@app.route('/nobleui-dashboard')
+def nobleui_dashboard():
+    """NobleUI themed dashboard"""
+    try:
+        admin_session = session.get('admin_logged_in', False)
+        tenant_id = session.get('tenant_id')
+        
+        # For development mode, auto-authenticate
+        session['authenticated'] = True
+        
+        # Try to get dashboard statistics
+        stats = {}
+        
+        # Get dashboard stats from the shared function
+        try:
+            from flask_backend.routes_steex import get_dashboard_stats
+            stats_data = get_dashboard_stats()
+            if stats_data and stats_data.get('status') == 'success':
+                stats = stats_data
+        except Exception as e:
+            logger.error(f"Error getting dashboard stats: {str(e)}")
+            stats = {
+                'transactions': {'total': 0, 'total_amount': 0, 'month': {'count': 0, 'amount': 0}},
+                'bank_connections': {'total': 0, 'active': 0},
+                'matches': {'total': 0, 'confirmed': 0, 'pending': 0},
+                'stripe_connections': {'total': 0, 'active': 0},
+                'stripe_payments': {'total': 0, 'total_amount': 0}
+            }
+        
+        # Get recent transactions for the dashboard
+        recent_transactions = []
+        bank_connections = []
+        stripe_connections = []
+        
+        if tenant_id:
+            # Get bank connections for this tenant
+            bank_connections = BankConnection.query.filter_by(
+                whmcs_instance_id=tenant_id
+            ).all()
+            
+            # Get bank IDs
+            bank_ids = [conn.bank_id for conn in bank_connections]
+            
+            # Get transactions
+            if bank_ids:
+                recent_transactions = Transaction.query.filter(
+                    Transaction.bank_id.in_(bank_ids)
+                ).order_by(
+                    Transaction.transaction_date.desc()
+                ).limit(10).all()
+            
+            # Get Stripe connections for the dashboard
+            stripe_connections = StripeConnection.query.filter_by(
+                whmcs_instance_id=tenant_id
+            ).all()
+                
+        return render_template(
+            'dashboard/nobleui_dashboard.html',
+            admin_session=admin_session,
+            tenant_id=tenant_id,
+            stats=stats,
+            recent_transactions=recent_transactions,
+            bank_connections=bank_connections,
+            stripe_connections=stripe_connections
+        )
+    except Exception as e:
+        logger.error(f"Error rendering NobleUI dashboard: {str(e)}")
+        # Create empty data structures to prevent template errors
+        return render_template(
+            'dashboard/nobleui_dashboard.html', 
+            error=str(e),
+            admin_session=False,
+            tenant_id=None,
+            stats={
+                'transactions': {'total': 0, 'total_amount': 0, 'month': {'count': 0, 'amount': 0}},
+                'bank_connections': {'total': 0, 'active': 0},
+                'matches': {'total': 0, 'confirmed': 0, 'pending': 0},
+                'stripe_connections': {'total': 0, 'active': 0},
+                'stripe_payments': {'total': 0, 'total_amount': 0}
+            },
+            recent_transactions=[],
+            bank_connections=[],
+            stripe_connections=[]
+        )

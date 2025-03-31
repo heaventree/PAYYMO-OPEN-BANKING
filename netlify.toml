@@ -1,3 +1,21 @@
 git add netlify.toml
 git commit -m "chore: add Netlify build config for frontend"
 git push
+
+[build]
+  # Directory with the built frontend assets to deploy
+  publish = "flask_backend/static"
+  
+  # Since this is mainly a Flask app, we won't use a standard build command
+  # but would deploy the static assets directly
+  command = "echo 'No build commands required for static assets deployment'"
+
+# Redirects all paths to index.html for SPA-like behavior
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  
+# Environment variables
+[build.environment]
+  FLASK_ENV = "production"

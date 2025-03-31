@@ -1,319 +1,207 @@
-/* Payymo Dashboard Core Styles */
+/**
+ * Payymo - Financial Management Dashboard
+ * Core styling for the application
+ */
 
-/* Apply dark theme colors to complement the Bootstrap agent dark theme */
+/* Core Variables */
 :root {
-  --payymo-primary: #0d6efd;
-  --payymo-secondary: #6c757d;
-  --payymo-success: #198754;
-  --payymo-info: #0dcaf0;
-  --payymo-warning: #ffc107;
-  --payymo-danger: #dc3545;
-  --payymo-light: #f8f9fa;
-  --payymo-dark: #212529;
-  --payymo-bg-subtle: rgba(13, 110, 253, 0.1);
+  --primary: #0dcaf0;
+  --primary-rgb: 13, 202, 240;
+  --secondary: #6c757d;
+  --success: #198754;
+  --info: #0dcaf0;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --bs-body-color: #e3e2e7;
+  --bs-body-bg: #1a1c24;
+  --bs-border-color: #313442;
 }
 
-/* Consistent card styling */
-.card {
-  border: none;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  margin-bottom: 1.5rem;
+/* Dashboard Card Metrics */
+.metric-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
-.card-animate {
-  transition: all 0.4s;
-}
-
-.card-animate:hover {
+.metric-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-/* Avatar styling */
-.avatar-xs {
-  height: 2rem;
-  width: 2rem;
-}
-
-.avatar-sm {
-  height: 3rem;
-  width: 3rem;
-}
-
-.avatar-title {
-  align-items: center;
+.metric-icon {
+  width: 48px;
+  height: 48px;
   display: flex;
-  font-weight: 500;
-  height: 100%;
+  align-items: center;
   justify-content: center;
-  width: 100%;
+  border-radius: 12px;
 }
 
-/* Status badges */
-.bg-primary-subtle {
-  background-color: rgba(13, 110, 253, 0.2) !important;
+.metric-card .trend {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
 }
 
-.bg-success-subtle {
-  background-color: rgba(25, 135, 84, 0.2) !important;
+.metric-card .trend.up {
+  background-color: rgba(25, 135, 84, 0.15);
+  color: #198754;
 }
 
-.bg-warning-subtle {
-  background-color: rgba(255, 193, 7, 0.2) !important;
+.metric-card .trend.down {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
 }
 
-.bg-danger-subtle {
-  background-color: rgba(220, 53, 69, 0.2) !important;
+/* Transaction List */
+.transaction-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  transition: background-color 0.2s ease;
 }
 
-.bg-info-subtle {
-  background-color: rgba(13, 202, 240, 0.2) !important;
+.transaction-item:hover {
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
-.text-primary {
-  color: var(--payymo-primary) !important;
+.transaction-item:last-child {
+  border-bottom: none;
 }
 
-.text-success {
-  color: var(--payymo-success) !important;
-}
-
-.text-warning {
-  color: var(--payymo-warning) !important;
-}
-
-.text-danger {
-  color: var(--payymo-danger) !important;
-}
-
-.text-info {
-  color: var(--payymo-info) !important;
-}
-
-/* Sidebar styling */
-.app-menu {
-  background-color: #1e1e2d;
-  width: 250px;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1001;
-  bottom: 0;
-  transition: all 0.2s ease-in-out;
-  border-right: 1px solid #313347;
-  box-shadow: 0 2px 4px rgba(15, 34, 58, 0.12);
-}
-
-.vertical-collpsed .app-menu {
-  width: 70px;
-}
-
-#layout-wrapper {
-  display: flex;
-  min-height: 100vh;
-  position: relative;
-}
-
-body:not(.vertical-collpsed) .app-menu {
-  display: block !important;
-  visibility: visible !important;
-}
-
-.main-content {
-  margin-left: 250px;
-  width: calc(100% - 250px);
-  transition: all 0.2s ease-in-out;
-}
-
-.vertical-collpsed .main-content {
-  margin-left: 70px;
-  width: calc(100% - 70px);
-}
-
-.navbar-brand-box {
-  padding: 0 1.5rem;
-  height: 70px;
+.transaction-icon {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
-.app-menu .menu-title {
-  color: #9a9cab;
-  margin: 15px 0;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 0 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.transaction-icon.income {
+  background-color: rgba(25, 135, 84, 0.15);
+  color: #198754;
 }
 
-.navbar-menu .navbar-nav .nav-link {
-  color: #9a9cab;
-  padding: 0.5rem 1.5rem;
-  font-size: 0.95rem;
+.transaction-icon.expense {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+}
+
+/* Analytics Chart */
+.chart-container {
   position: relative;
-  font-weight: 500;
-  transition: all 0.2s;
+  height: 300px;
 }
 
-.navbar-menu .navbar-nav .nav-link:hover,
-.navbar-menu .navbar-nav .nav-link.active {
-  color: #fff;
-  background-color: rgba(13, 110, 253, 0.1);
+/* Bank Connections */
+.connection-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  transition: background-color 0.2s ease;
 }
 
-.navbar-menu .navbar-nav .nav-link.active {
-  border-left: 3px solid var(--payymo-primary);
+.connection-item:hover {
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
-.navbar-menu .navbar-nav .nav-link i {
-  width: 20px;
-  margin-right: 10px;
-  font-size: 1.1rem;
-  vertical-align: middle;
+.connection-item:last-child {
+  border-bottom: none;
 }
 
-/* Dropdown menus */
-.menu-dropdown {
-  padding-left: 1.5rem;
+.connection-logo {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: #ffffff;
 }
 
-.menu-dropdown .nav-sm .nav-link {
-  padding: 0.5rem 1.5rem;
-  color: #9a9cab;
-  font-size: 0.875rem;
+.connection-logo img {
+  max-width: 80%;
+  max-height: 80%;
 }
 
-.menu-dropdown .nav-sm .nav-link:hover {
-  color: #fff;
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
 }
 
-.navbar-menu .navbar-nav .menu-link[data-bs-toggle="collapse"]:after {
-  display: block;
-  content: "\f0140";
-  font-family: "Material Design Icons";
-  float: right;
-  font-size: 1rem;
-  transition: transform .2s;
+.status-badge.active {
+  background-color: rgba(25, 135, 84, 0.15);
+  color: #198754;
 }
 
-.navbar-menu .navbar-nav .menu-link[data-bs-toggle="collapse"][aria-expanded="true"]:after {
-  transform: rotate(180deg);
+.status-badge.pending {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
 }
 
-#scrollbar {
-  height: 100%;
-  overflow-y: auto;
-  padding-bottom: 50px;
+.status-badge.inactive {
+  background-color: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
 }
 
-.vertical-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: none;
+/* Settings Panel */
+.settings-panel .form-switch {
+  padding-left: 2.5em;
 }
 
-.sidebar-enable .vertical-overlay {
-  display: block;
+.settings-panel .form-check-input {
+  width: 2em;
+  height: 1em;
 }
 
-/* Hamburger Menu styles */
-.topnav-hamburger-icon {
+/* Animations */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Utility Classes */
+.cursor-pointer {
   cursor: pointer;
 }
 
-.hamburger-icon {
-  position: relative;
-  height: 20px;
-  width: 25px;
-  display: block;
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.hamburger-icon span {
-  background-color: #adb5bd;
-  position: absolute;
-  border-radius: 2px;
-  transition: .3s cubic-bezier(.8, .5, .2, 1.4);
-  width: 100%;
-  height: 2px;
-  display: block;
-  left: 0;
+.bg-dark-subtle {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-.hamburger-icon span:nth-child(1) {
-  top: 0;
-  width: 80%;
+.border-dashed {
+  border-style: dashed !important;
 }
 
-.hamburger-icon span:nth-child(2) {
-  top: 9px;
-}
-
-.hamburger-icon span:nth-child(3) {
-  bottom: 0;
-  width: 60%;
-}
-
-/* Hamburger animation for open state */
-#topnav-hamburger-icon.open .hamburger-icon span:nth-child(1) {
-  top: 8px;
-  transform: rotate(45deg);
-  width: 100%;
-}
-
-#topnav-hamburger-icon.open .hamburger-icon span:nth-child(2) {
-  transform: scale(0);
-}
-
-#topnav-hamburger-icon.open .hamburger-icon span:nth-child(3) {
-  bottom: 10px;
-  transform: rotate(-45deg);
-  width: 100%;
-}
-
-/* Button styling */
-.btn-soft-primary {
-  background-color: rgba(13, 110, 253, 0.1);
-  color: var(--payymo-primary);
-}
-
-.btn-soft-secondary {
-  background-color: rgba(108, 117, 125, 0.1);
-  color: var(--payymo-secondary);
-}
-
-.btn-soft-success {
-  background-color: rgba(25, 135, 84, 0.1);
-  color: var(--payymo-success);
-}
-
-.btn-soft-info {
-  background-color: rgba(13, 202, 240, 0.1);
-  color: var(--payymo-info);
-}
-
-.btn-soft-warning {
-  background-color: rgba(255, 193, 7, 0.1);
-  color: var(--payymo-warning);
-}
-
-.btn-soft-danger {
-  background-color: rgba(220, 53, 69, 0.1);
-  color: var(--payymo-danger);
-}
-
-/* Table styling */
-.table-card th {
-  border-top: none;
-}
-
-/* Chart containers */
-.apex-charts {
-  min-height: 300px;
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+  .metric-card {
+    margin-bottom: 1rem;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
 }
