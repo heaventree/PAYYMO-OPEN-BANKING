@@ -970,6 +970,12 @@ def nobleui_dashboard():
         bank_connections = []
         stripe_connections = []
         
+        # Chart data for transaction history
+        chart_data = {
+            'amounts': [],
+            'dates': []
+        }
+        
         if tenant_id:
             # Get bank connections for this tenant
             bank_connections = BankConnection.query.filter_by(
@@ -986,6 +992,37 @@ def nobleui_dashboard():
                 ).order_by(
                     Transaction.transaction_date.desc()
                 ).limit(10).all()
+                
+                # Get transaction data for last 6 months for chart
+                from datetime import datetime, timedelta
+                end_date = datetime.now()
+                start_date = end_date - timedelta(days=180)  # Last 6 months
+                
+                # Query transactions by month for chart
+                monthly_transactions = db.session.query(
+                    db.func.sum(Transaction.amount), 
+                    db.func.strftime('%Y-%m', Transaction.transaction_date)
+                ).filter(
+                    Transaction.bank_id.in_(bank_ids),
+                    Transaction.transaction_date.between(start_date, end_date)
+                ).group_by(
+                    db.func.strftime('%Y-%m', Transaction.transaction_date)
+                ).order_by(
+                    db.func.strftime('%Y-%m', Transaction.transaction_date)
+                ).all()
+                
+                # Format chart data
+                if monthly_transactions:
+                    for amount, date_str in monthly_transactions:
+                        try:
+                            # Convert to month name (e.g., "Jan", "Feb")
+                            date_obj = datetime.strptime(date_str, '%Y-%m')
+                            month_name = date_obj.strftime('%b')
+                            
+                            chart_data['amounts'].append(abs(float(amount or 0)))
+                            chart_data['dates'].append(month_name)
+                        except Exception as e:
+                            logger.error(f"Error formatting chart data: {str(e)}")
             
             # Get Stripe connections for the dashboard
             stripe_connections = StripeConnection.query.filter_by(
@@ -999,7 +1036,8 @@ def nobleui_dashboard():
             stats=stats,
             recent_transactions=recent_transactions,
             bank_connections=bank_connections,
-            stripe_connections=stripe_connections
+            stripe_connections=stripe_connections,
+            chart_data=chart_data
         )
     except Exception as e:
         logger.error(f"Error rendering NobleUI dashboard: {str(e)}")
@@ -1018,5 +1056,125 @@ def nobleui_dashboard():
             },
             recent_transactions=[],
             bank_connections=[],
-            stripe_connections=[]
+            stripe_connections=[],
+            chart_data={'amounts': [], 'dates': []}
         )
+
+@app.route('/api/ai-assistant', methods=['POST'])
+def ai_assistant_api():
+    """API endpoint for AI Assistant interaction"""
+    try:
+        data = request.json
+        user_message = data.get('message', '').strip()
+        tenant_id = session.get('tenant_id')
+        
+        if not user_message:
+            return jsonify({
+                'status': 'error',
+                'message': 'No message provided'
+            }), 400
+            
+        # Get relevant data for AI context
+        stats = {}
+        recent_transactions = []
+        unmatched_count = 0
+        
+        try:
+            # Get dashboard stats
+            from flask_backend.routes_steex import get_dashboard_stats
+            stats_data = get_dashboard_stats()
+            if stats_data and stats_data.get('status') == 'success':
+                stats = stats_data
+                
+            # Get recent transactions and unmatched count if tenant_id available
+            if tenant_id:
+                # Get bank connections
+                bank_connections = BankConnection.query.filter_by(
+                    whmcs_instance_id=tenant_id
+                ).all()
+                
+                bank_ids = [conn.bank_id for conn in bank_connections]
+                
+                if bank_ids:
+                    # Recent transactions
+                    recent_transactions = Transaction.query.filter(
+                        Transaction.bank_id.in_(bank_ids)
+                    ).order_by(
+                        Transaction.transaction_date.desc()
+                    ).limit(5).all()
+                    
+                    # Count unmatched transactions
+                    from flask_backend.models.financial import StandardizedTransaction, InvoiceMatch
+                    
+                    # Get all transaction IDs
+                    all_transaction_ids = [t.id for t in StandardizedTransaction.query.filter_by(
+                        tenant_id=tenant_id
+                    ).all()]
+                    
+                    # Get matched transaction IDs
+                    matched_transaction_ids = [m.transaction_id for m in InvoiceMatch.query.filter(
+                        InvoiceMatch.transaction_id.in_(all_transaction_ids)
+                    ).all()]
+                    
+                    # Calculate unmatched count
+                    unmatched_count = len(all_transaction_ids) - len(matched_transaction_ids)
+        except Exception as e:
+            logger.error(f"Error preparing AI context data: {str(e)}")
+        
+        # Process user query and generate response
+        response_text = ""
+        
+        # Simple pattern matching for demo - in production, this would call a more advanced AI model
+        if "unmatched" in user_message.lower():
+            response_text = f"You currently have {unmatched_count} unmatched transactions. Would you like me to help you review them?"
+        
+        elif "invoicing status" in user_message.lower():
+            if stats and 'matches' in stats:
+                confirmed = stats['matches'].get('confirmed', 0)
+                pending = stats['matches'].get('pending', 0)
+                total = stats['matches'].get('total', 0)
+                response_text = f"Your invoicing status: {confirmed} confirmed matches, {pending} pending matches out of {total} total matches."
+            else:
+                response_text = "I couldn't retrieve your invoicing status at the moment."
+        
+        elif "transaction patterns" in user_message.lower() or "analyze" in user_message.lower():
+            if recent_transactions:
+                amounts = [t.amount for t in recent_transactions]
+                avg_amount = sum(amounts) / len(amounts) if amounts else 0
+                response_text = f"Based on your recent transactions, your average transaction amount is £{abs(avg_amount):.2f}. "
+                
+                # Add more insights
+                if stats and 'transactions' in stats and stats['transactions'].get('month', {}).get('count', 0) > 0:
+                    month_count = stats['transactions']['month']['count']
+                    response_text += f"You've had {month_count} transactions this month. "
+                
+                response_text += "Would you like a more detailed analysis of your transaction patterns?"
+            else:
+                response_text = "I don't have enough transaction data to analyze patterns yet."
+        
+        elif "optimization" in user_message.lower() or "tips" in user_message.lower():
+            response_text = "Here are some optimization tips based on your financial data:\n\n"
+            
+            if unmatched_count > 0:
+                response_text += f"1. You have {unmatched_count} unmatched transactions. Consider reviewing these to improve your invoice matching.\n\n"
+            
+            if stats and 'bank_connections' in stats and stats['bank_connections'].get('total', 0) < 2:
+                response_text += "2. Consider connecting additional bank accounts to get a more complete picture of your finances.\n\n"
+            
+            response_text += "3. Set up automatic matching rules to save time on manual invoice reconciliation."
+        
+        else:
+            # Default response
+            response_text = "I'm your Payymo AI Assistant. I can help you with financial insights, transaction analysis, and optimization tips. What would you like to know about your financial data?"
+        
+        return jsonify({
+            'status': 'success',
+            'response': response_text
+        })
+    
+    except Exception as e:
+        logger.error(f"Error in AI Assistant API: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': f"An error occurred: {str(e)}"
+        }), 500
