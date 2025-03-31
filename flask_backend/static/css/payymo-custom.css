@@ -1,5 +1,5 @@
 /**
- * Payymo Custom Styles for NobleUI Theme
+ * Payymo Custom Styles
  */
 
 /* Custom Brand Colors */
@@ -15,18 +15,21 @@
 }
 
 /* Custom Brand Styling */
-.sidebar-brand span {
+.sidebar-brand span,
+.navbar-brand span {
     color: var(--payymo-primary);
 }
 
 /* Dashboard Card Styling */
-.stats-card {
+.stats-card,
+.shadow-hover {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     border-radius: 0.5rem;
     overflow: hidden;
 }
 
-.stats-card:hover {
+.stats-card:hover,
+.shadow-hover:hover {
     transform: translateY(-5px);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
@@ -58,7 +61,7 @@
 }
 
 .transaction-item:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.05);
+    background-color: rgba(0, 97, 242, 0.05);
 }
 
 .transaction-icon {
@@ -95,19 +98,20 @@
 .empty-state {
     padding: 3rem 1.5rem;
     text-align: center;
-    background-color: rgba(var(--bs-light-rgb), 0.05);
+    background-color: rgba(240, 245, 255, 0.05);
     border-radius: 0.5rem;
 }
 
 .empty-state-icon {
     font-size: 3rem;
     margin-bottom: 1.5rem;
-    color: var(--bs-gray-500);
+    color: #6c757d;
 }
 
 /* Dark Mode Adjustments */
-[data-bs-theme=dark] .stats-card {
-    background-color: var(--bs-dark);
+[data-bs-theme=dark] .stats-card,
+[data-bs-theme=dark] .shadow-hover {
+    background-color: #1f2b3d;
     border-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -117,18 +121,7 @@
 
 /* Tables Styling */
 .table-hover tbody tr:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.05);
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .stats-card {
-        margin-bottom: 1rem;
-    }
-    
-    .chart-container {
-        min-height: 250px;
-    }
+    background-color: rgba(0, 97, 242, 0.05);
 }
 
 /* Additional Helper Classes */
@@ -142,6 +135,48 @@
 
 .shadow-hover:hover {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Background Utilities */
+.bg-primary-light {
+    background-color: rgba(0, 97, 242, 0.1);
+}
+
+.bg-success-light {
+    background-color: rgba(0, 172, 105, 0.1);
+}
+
+.bg-info-light {
+    background-color: rgba(0, 207, 213, 0.1);
+}
+
+.bg-warning-light {
+    background-color: rgba(244, 161, 0, 0.1);
+}
+
+.bg-danger-light {
+    background-color: rgba(232, 21, 0, 0.1);
+}
+
+/* Text colors */
+.text-primary {
+    color: var(--payymo-primary) !important;
+}
+
+.text-success {
+    color: var(--payymo-success) !important;
+}
+
+.text-info {
+    color: var(--payymo-info) !important;
+}
+
+.text-warning {
+    color: var(--payymo-warning) !important;
+}
+
+.text-danger {
+    color: var(--payymo-danger) !important;
 }
 
 /* Notification Dot */
@@ -174,4 +209,15 @@
 [data-bs-theme=dark] {
     --bs-primary: var(--payymo-primary);
     --bs-primary-rgb: 0, 97, 242;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .chart-container {
+        min-height: 250px;
+    }
 } 

@@ -2,9 +2,8 @@
   # Directory with the built frontend assets to deploy
   publish = "flask_backend/static"
   
-  # Since this is mainly a Flask app, we won't use a standard build command
-  # but would deploy the static assets directly
-  command = "echo 'No build commands required for static assets deployment'"
+  # Use our custom build script
+  command = "npm install && npm run build"
 
 # Redirects all paths to index.html for SPA-like behavior
 [[redirects]]
@@ -15,3 +14,22 @@
 # Environment variables
 [build.environment]
   FLASK_ENV = "production"
+  NODE_VERSION = "16"
+
+# These plugins will run during the build
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+# Build processing settings
+[build.processing]
+  skip_processing = false
+[build.processing.css]
+  bundle = true
+  minify = true
+[build.processing.js]
+  bundle = true
+  minify = true
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = true

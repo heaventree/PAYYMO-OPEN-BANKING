@@ -1,5 +1,5 @@
 /**
- * Theme Switcher for NobleUI
+ * Theme Switcher
  * Manages light/dark mode switching and preferences
  */
 
@@ -11,9 +11,6 @@
     const DARK_MODE = 'dark';
     const THEME_STORAGE_KEY = 'payymo-theme-preference';
     
-    // DOM elements
-    let themeSwitchers;
-
     /**
      * Set theme on HTML element
      */
@@ -21,9 +18,6 @@
         const oldTheme = document.documentElement.getAttribute('data-bs-theme');
         document.documentElement.setAttribute('data-bs-theme', theme);
         localStorage.setItem(THEME_STORAGE_KEY, theme);
-        
-        // Update switcher state if it exists
-        updateSwitchersState(theme);
         
         // Dispatch theme changed event if theme has changed
         if (oldTheme !== theme) {
@@ -34,20 +28,6 @@
                 }
             }));
         }
-    }
-    
-    /**
-     * Update all theme switchers to match current theme
-     */
-    function updateSwitchersState(theme) {
-        if (!themeSwitchers) return;
-        
-        themeSwitchers.forEach(switcher => {
-            const input = switcher.querySelector('input[type="checkbox"]');
-            if (input) {
-                input.checked = theme === DARK_MODE;
-            }
-        });
     }
     
     /**
@@ -83,17 +63,14 @@
         setTheme(theme);
         
         // Find theme switchers in DOM
-        themeSwitchers = document.querySelectorAll('.theme-switcher');
+        const themeSwitchers = document.querySelectorAll('.theme-switcher');
         
         // Add event listeners to switchers
         themeSwitchers.forEach(switcher => {
-            switcher.addEventListener('click', function(e) {
-                if (e.target.tagName === 'INPUT') return; // Let the checkbox handle its own state
-                toggleTheme();
-            });
-            
             const input = switcher.querySelector('input[type="checkbox"]');
             if (input) {
+                input.checked = theme === DARK_MODE;
+                
                 input.addEventListener('change', function() {
                     setTheme(this.checked ? DARK_MODE : LIGHT_MODE);
                 });

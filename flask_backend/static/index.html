@@ -20,7 +20,7 @@
     <!-- Feather icons -->
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     
-    <!-- NobleUI CSS -->
+    <!-- NobleUI CSS (Path may need to be adjusted based on your deployment) -->
     <link rel="stylesheet" href="nobleui/NobleUI-HTML-v3.0/template/assets/css/demo1/style.css">
     
     <!-- Custom CSS -->
@@ -114,6 +114,30 @@
             justify-content: center;
             margin-bottom: 1rem;
         }
+        
+        /* Fallback styles */
+        :root {
+            --payymo-primary: #0061f2;
+            --payymo-secondary: #6900c7;
+            --payymo-success: #00ac69;
+            --payymo-info: #00cfd5;
+            --payymo-warning: #f4a100;
+            --payymo-danger: #e81500;
+            --payymo-light: #f0f5ff;
+            --payymo-dark: #1f2b3d;
+        }
+        
+        .btn-payymo-primary {
+            background-color: var(--payymo-primary);
+            border-color: var(--payymo-primary);
+            color: #fff;
+        }
+        
+        .btn-payymo-primary:hover {
+            background-color: #0052d9;
+            border-color: #0052d9;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -170,7 +194,7 @@
             </div>
             
             <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 stats-card">
+                <div class="card h-100 border-0 shadow-hover">
                     <div class="card-body text-center p-4">
                         <div class="feature-icon bg-primary-light mx-auto">
                             <i data-feather="moon" class="text-primary"></i>
@@ -182,7 +206,7 @@
             </div>
             
             <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 stats-card">
+                <div class="card h-100 border-0 shadow-hover">
                     <div class="card-body text-center p-4">
                         <div class="feature-icon bg-success-light mx-auto">
                             <i data-feather="bar-chart-2" class="text-success"></i>
@@ -194,73 +218,13 @@
             </div>
             
             <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 stats-card">
+                <div class="card h-100 border-0 shadow-hover">
                     <div class="card-body text-center p-4">
                         <div class="feature-icon bg-info-light mx-auto">
                             <i data-feather="layout" class="text-info"></i>
                         </div>
                         <h4>Responsive Design</h4>
                         <p class="text-muted">Fully responsive layout that works great on desktop, tablet, and mobile devices.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mb-5">
-            <div class="col-md-6 mb-4">
-                <div class="card h-100 border-0 connection-card">
-                    <div class="card-body p-4">
-                        <h4 class="mb-3">Cards & Components</h4>
-                        <p class="text-muted">The dashboard includes a variety of card designs and components that can be used to build rich interfaces.</p>
-                        <ul class="list-unstyled">
-                            <li class="d-flex align-items-center mb-3 transaction-item">
-                                <div class="transaction-icon bg-primary-light rounded-circle me-3">
-                                    <i data-feather="check" class="text-primary"></i>
-                                </div>
-                                <span>Interactive stat cards with animations</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3 transaction-item">
-                                <div class="transaction-icon bg-primary-light rounded-circle me-3">
-                                    <i data-feather="check" class="text-primary"></i>
-                                </div>
-                                <span>Transaction listings with status indicators</span>
-                            </li>
-                            <li class="d-flex align-items-center transaction-item">
-                                <div class="transaction-icon bg-primary-light rounded-circle me-3">
-                                    <i data-feather="check" class="text-primary"></i>
-                                </div>
-                                <span>Connection cards with action buttons</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6 mb-4">
-                <div class="card h-100 border-0 connection-card">
-                    <div class="card-body p-4">
-                        <h4 class="mb-3">WHMCS Integration</h4>
-                        <p class="text-muted">The dashboard is designed to work seamlessly with WHMCS, allowing for a unified experience.</p>
-                        <ul class="list-unstyled">
-                            <li class="d-flex align-items-center mb-3 transaction-item">
-                                <div class="transaction-icon bg-success-light rounded-circle me-3">
-                                    <i data-feather="check" class="text-success"></i>
-                                </div>
-                                <span>User authentication and session management</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-3 transaction-item">
-                                <div class="transaction-icon bg-success-light rounded-circle me-3">
-                                    <i data-feather="check" class="text-success"></i>
-                                </div>
-                                <span>Invoice and payment tracking</span>
-                            </li>
-                            <li class="d-flex align-items-center transaction-item">
-                                <div class="transaction-icon bg-success-light rounded-circle me-3">
-                                    <i data-feather="check" class="text-success"></i>
-                                </div>
-                                <span>Bank and Stripe connection management</span>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
