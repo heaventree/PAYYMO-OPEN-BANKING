@@ -34,6 +34,76 @@ async function build() {
     log('Found index.html');
   }
   
+  // Check for NobleUI template directory
+  const nobleUiTemplateDir = path.join(staticDir, 'nobleui');
+  if (!fs.existsSync(nobleUiTemplateDir)) {
+    log('Warning: NobleUI template directory not found in static directory. Creating a placeholder structure.');
+    fs.mkdirSync(path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'ui-components'), { recursive: true });
+    fs.mkdirSync(path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'forms'), { recursive: true });
+    fs.mkdirSync(path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'charts'), { recursive: true });
+    fs.mkdirSync(path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'tables'), { recursive: true });
+    fs.mkdirSync(path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'auth'), { recursive: true });
+    fs.mkdirSync(path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'general'), { recursive: true });
+    fs.mkdirSync(path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'assets', 'css', 'demo1'), { recursive: true });
+  } else {
+    log('Found NobleUI template directory');
+  }
+  
+  // Create placeholder HTML files if they don't exist
+  const placeholderFiles = [
+    path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'dashboard.html'),
+    path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'ui-components', 'accordion.html'),
+    path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'forms', 'basic-elements.html'),
+    path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'charts', 'apex.html'),
+    path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'tables', 'basic-table.html'),
+    path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'auth', 'login.html'),
+    path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'demo1', 'pages', 'general', 'profile.html')
+  ];
+  
+  const placeholderContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NobleUI Template</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container py-5 text-center">
+    <h1>NobleUI Template Placeholder</h1>
+    <p class="lead">This is a placeholder for the actual NobleUI template.</p>
+    <p>To view the real NobleUI templates, please copy the full NobleUI theme files to this directory.</p>
+    <div class="mt-4">
+      <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+  </div>
+</body>
+</html>
+  `.trim();
+  
+  placeholderFiles.forEach(file => {
+    if (!fs.existsSync(file)) {
+      const dir = path.dirname(file);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(file, placeholderContent);
+      log(`Created placeholder file: ${file}`);
+    }
+  });
+  
+  // Create placeholder CSS file
+  const placeholderCssFile = path.join(nobleUiTemplateDir, 'NobleUI-HTML-v3.0', 'template', 'assets', 'css', 'demo1', 'style.css');
+  if (!fs.existsSync(placeholderCssFile)) {
+    const dir = path.dirname(placeholderCssFile);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(placeholderCssFile, '/* Placeholder CSS file */');
+    log(`Created placeholder CSS file: ${placeholderCssFile}`);
+  }
+  
   // Check for CSS files
   const cssDir = path.join(staticDir, 'css');
   if (!fs.existsSync(cssDir)) {

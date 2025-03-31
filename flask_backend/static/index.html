@@ -138,6 +138,25 @@
             border-color: #0052d9;
             color: #fff;
         }
+        
+        /* Template links */
+        .template-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .template-card img {
+            height: 160px;
+            object-fit: cover;
+            object-position: top;
+        }
     </style>
 </head>
 <body>
@@ -167,13 +186,89 @@
             <div class="col-lg-8 mx-auto text-center">
                 <h1 class="display-4 mb-3">Payymo Dashboard</h1>
                 <p class="lead mb-4">Powered by NobleUI - A modern admin template integrated with WHMCS</p>
-                <div class="d-flex justify-content-center gap-3">
-                    <button class="btn btn-payymo-primary px-4 py-2">
-                        <i data-feather="eye" class="me-2"></i> View Full Demo
-                    </button>
-                    <button class="btn btn-outline-primary px-4 py-2">
-                        <i data-feather="code" class="me-2"></i> View Source
-                    </button>
+            </div>
+        </div>
+
+        <!-- NobleUI Templates Section -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center mb-4">
+                <h2 class="mb-3">NobleUI Dashboard Templates</h2>
+                <p class="text-muted">Access the original NobleUI templates below</p>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card template-card">
+                    <img src="https://via.placeholder.com/300x160/6571ff/ffffff?text=Dashboard" class="card-img-top" alt="Dashboard Template">
+                    <div class="card-body">
+                        <h5 class="card-title">Main Dashboard</h5>
+                        <p class="card-text">The main dashboard template with charts and widgets.</p>
+                        <a href="nobleui/NobleUI-HTML-v3.0/template/demo1/dashboard.html" class="btn btn-payymo-primary w-100" target="_blank">View Template</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card template-card">
+                    <img src="https://via.placeholder.com/300x160/00ac69/ffffff?text=Components" class="card-img-top" alt="UI Components">
+                    <div class="card-body">
+                        <h5 class="card-title">UI Components</h5>
+                        <p class="card-text">Various UI components and elements.</p>
+                        <a href="nobleui/NobleUI-HTML-v3.0/template/demo1/pages/ui-components/accordion.html" class="btn btn-payymo-primary w-100" target="_blank">View Components</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card template-card">
+                    <img src="https://via.placeholder.com/300x160/e81500/ffffff?text=Forms" class="card-img-top" alt="Forms">
+                    <div class="card-body">
+                        <h5 class="card-title">Forms</h5>
+                        <p class="card-text">Form layouts and validation templates.</p>
+                        <a href="nobleui/NobleUI-HTML-v3.0/template/demo1/pages/forms/basic-elements.html" class="btn btn-payymo-primary w-100" target="_blank">View Forms</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Additional Templates -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-4">
+                <div class="card template-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Charts</h5>
+                        <p class="card-text">Various chart components and data visualization.</p>
+                        <a href="nobleui/NobleUI-HTML-v3.0/template/demo1/pages/charts/apex.html" class="btn btn-outline-primary w-100" target="_blank">View Charts</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card template-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Tables</h5>
+                        <p class="card-text">Data tables and grid layouts.</p>
+                        <a href="nobleui/NobleUI-HTML-v3.0/template/demo1/pages/tables/basic-table.html" class="btn btn-outline-primary w-100" target="_blank">View Tables</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card template-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Auth Pages</h5>
+                        <p class="card-text">Login, register and other auth pages.</p>
+                        <a href="nobleui/NobleUI-HTML-v3.0/template/demo1/pages/auth/login.html" class="btn btn-outline-primary w-100" target="_blank">View Auth Pages</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card template-card">
+                    <div class="card-body">
+                        <h5 class="card-title">General Pages</h5>
+                        <p class="card-text">Profile, pricing, error pages and more.</p>
+                        <a href="nobleui/NobleUI-HTML-v3.0/template/demo1/pages/general/profile.html" class="btn btn-outline-primary w-100" target="_blank">View Pages</a>
+                    </div>
                 </div>
             </div>
         </div>
